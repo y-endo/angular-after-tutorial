@@ -1,22 +1,17 @@
-import { Component, OnInit } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { User } from "./user";
+import { Component, OnInit } from '@angular/core';
+import { UserService } from './services/user.service';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  users: User[] = [];
+  users = this.userService.users$;
 
-  constructor(private http: HttpClient) {}
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
-    this.http
-      .get<{ data: User[] }>("https://reqres.in/api/users")
-      .subscribe((res) => {
-        this.users = res.data;
-      });
+    this.userService.fetchUsers();
   }
 }
