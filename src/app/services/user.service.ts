@@ -1,27 +1,56 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, filter } from 'rxjs/operators';
+import { StoreService } from './store.service';
 import { User } from '../user';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class UserService {
-  private _users$ = new BehaviorSubject<User[]>([]);
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private store: StoreService) {}
 
   get users$() {
-    return this._users$.asObservable();
+    return (
+      this.store
+        // state.userListに変更があったときだけ後続のpipeが実行される
+        .select(state => state.userList)
+        .pipe(
+          map(({ items, filter }) =>
+            items.filter(user => (user.first_name + user.last_name).includes(filter.nameFilter))
+          )
+        )
+    );
   }
 
-  fetchUsers(): void {
-    this.http
+  get filter$() {
+    return this.store.select(state => state.userList.filter);
+  }
+
+  async fetchUsers() {
+    const users = await this.http
       .get<{ data: User[] }>('https://reqres.in/api/users')
-      .pipe(map((res) => res.data))
-      .subscribe((users) => {
-        this._users$.next(users);
-      });
+      .pipe(map(res => res.data))
+      .toPromise();
+
+    this.store.update(state => ({
+      ...state,
+      userList: {
+        ...state.userList,
+        items: users
+      }
+    }));
+  }
+
+  setNameFilter(nameFilter: string) {
+    this.store.update(state => ({
+      ...state,
+      userList: {
+        ...state.userList,
+        filter: {
+          nameFilter
+        }
+      }
+    }));
   }
 }
