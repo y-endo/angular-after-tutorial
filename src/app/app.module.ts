@@ -8,9 +8,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { UserListItemComponent } from './view/user-list-item/user-list-item.component';
 import { UserListComponent } from './view/user-list/user-list.component';
 import { UserListFilterComponent } from './view/user-list-filter/user-list-filter.component';
+import { UserDetailPageComponent } from './view/user-detail-page/user-detail-page.component';
 
 @NgModule({
-  declarations: [AppComponent, UserListItemComponent, UserListComponent, UserListFilterComponent],
+  declarations: [AppComponent, UserListItemComponent, UserListComponent, UserListFilterComponent, UserDetailPageComponent],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule, ReactiveFormsModule],
   providers: [],
   bootstrap: [AppComponent]
