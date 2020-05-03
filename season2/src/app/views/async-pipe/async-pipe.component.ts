@@ -12,8 +12,13 @@ export class AsyncPipeComponent implements OnInit {
   public value$: Observable<any>;
 
   constructor(private dataService: DataService) {
-    this.value$ = this.dataService.valueChanges$.pipe(map(value => `Value: ${value}`));
+    // this.value$ = this.dataService.valueChanges$.pipe(map(value => `Value: ${value}`));
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.value$ = this.dataService.valueChanges$;
+      this.dataService.setValue({ name: 'AAA' });
+    }, 1000);
+  }
 }

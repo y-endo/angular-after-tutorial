@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-explicit-subscribe',
@@ -15,9 +15,14 @@ export class ExplicitSubscribeComponent implements OnInit, OnDestroy {
   constructor(private dataService: DataService) {}
 
   ngOnInit(): void {
-    this.dataService.valueChanges$.pipe(takeUntil(this.onDestroy$)).subscribe(value => {
-      this.value = value;
-    });
+    this.dataService.valueChanges$
+      .pipe(
+        takeUntil(this.onDestroy$),
+        map(value => `ValueName is ${value.name}`)
+      )
+      .subscribe(value => {
+        this.value = value;
+      });
   }
 
   ngOnDestroy(): void {

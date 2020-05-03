@@ -1,3 +1,21 @@
 <div>
   {{ value$ | async }}
+  <br>
+  {{ (value$ | async)?.name }}
 </div>
+
+<ng-container *ngIf="value$ | async as value;">
+  <div>1. {{ value.name }}</div>
+</ng-container>
+
+<ng-container *ngIf="value$ | async as value; else loading">
+  <div>2. {{ value.name }}</div>
+</ng-container>
+
+<ng-container *ngIf="{ value: value$ | async } as snapshot;">
+  <div>3. {{ snapshot.value }} {{ snapshot.value?.name }}</div>
+</ng-container>
+
+<ng-template #loading>
+  Loading...
+</ng-template>
